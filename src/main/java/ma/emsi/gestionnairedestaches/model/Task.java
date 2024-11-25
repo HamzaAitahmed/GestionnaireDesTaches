@@ -23,6 +23,7 @@ public class Task {
     private User UserTask;
 
     @ManyToOne
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private Project ProjectTask;
 
     @Override
