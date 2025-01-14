@@ -1,35 +1,35 @@
 package ma.emsi.gestionnairedestaches.controller;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import ma.emsi.gestionnairedestaches.model.Project;
-import ma.emsi.gestionnairedestaches.model.Task;
 import ma.emsi.gestionnairedestaches.model.Team;
 import ma.emsi.gestionnairedestaches.model.User;
 import ma.emsi.gestionnairedestaches.repository.ProjectRepository;
 import ma.emsi.gestionnairedestaches.repository.TeamRepository;
 import ma.emsi.gestionnairedestaches.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @Controller
-@SessionAttributes("connectedUser")
-
 public class TeamController {
 
-    @Autowired TeamRepository teamrepository;
-    @Autowired ProjectRepository projectRepository;
-    @Autowired UserRepository userRepository;
+    private final TeamRepository teamrepository;
+    private final ProjectRepository projectRepository;
+    private final UserRepository userRepository;
 
+    TeamController(TeamRepository teamrepository, ProjectRepository projectRepository, UserRepository userRepository) {
+        this.teamrepository = teamrepository;
+        this.projectRepository = projectRepository;
+        this.userRepository = userRepository;
+    }
 
     @GetMapping("/team")
-    public String listTeams(@RequestParam(name = "search" , defaultValue = "My Teams") String search,
-                            @ModelAttribute("connectedUser") User user,Model model) {
+    public String listTeams(@RequestParam(name = "search" , defaultValue = "My Teams") String search, HttpSession session, Model model)
+    {
+        User user = (User) session.getAttribute("connectedUser");
 
         List<Team> teams = null;
         if(search.equals("My Teams")){
@@ -51,17 +51,12 @@ public class TeamController {
         return "Main/TeamPages/team";
     }
 
-    @RequestMapping(value = "/TeamMembers",method = RequestMethod.GET)
-    public String TeamMembers(Model model, @ModelAttribute("connectedUser") User user , @RequestParam(name = "Team_id") int Team_id ) {
-
+    @GetMapping("/TeamMembers")
+    public String teamMembers(Model model, HttpSession session, @RequestParam(name = "Team_id") int Team_id )
+    {
+        User user = (User) session.getAttribute("connectedUser");
         Team team = teamrepository.findTeamById(Team_id);
         List<User> users = userRepository.findNotMembersByTeamId(Team_id);
-
-        System.out.println("TeamMembers : ----> ");
-
-        for (User u : users) {
-            System.out.println(u);
-        }
 
         model.addAttribute("user", user);
         model.addAttribute("users", users);
@@ -70,15 +65,13 @@ public class TeamController {
         return "Main/TeamPages/team-members";
     }
 
-    @RequestMapping(value = "/TeamProjects",method = RequestMethod.GET)
-    public String TeamProjects(Model model, @ModelAttribute("connectedUser") User user , @RequestParam(name = "Team_id") int Team_id ) {
+    @GetMapping("/TeamProjects")
+    public String teamProjects(Model model, HttpSession session, @RequestParam(name = "Team_id") int Team_id )
+    {
+        User user = (User) session.getAttribute("connectedUser");
 
         Team team = teamrepository.findTeamById(Team_id);
         List<Project> Projects = projectRepository.findProjectWithoutTeam();
-        for (Project p : Projects) {
-            System.out.println("Project Without Team : "+p);
-        }
-
 
         model.addAttribute("user", user);
         model.addAttribute("Projects", Projects);
@@ -87,8 +80,9 @@ public class TeamController {
         return "Main/TeamPages/team-projects";
     }
 
-    @RequestMapping(value = "/DeleteMember",method = RequestMethod.GET)
-    public String DeleteMember(Model model, @ModelAttribute("connectedUser") User user , @RequestParam(name = "Team_id") int Team_id , @RequestParam(name = "Member_id") int Member_id ) {
+    @GetMapping("/DeleteMember")
+    public String deleteMember(@RequestParam(name = "Team_id") int Team_id , @RequestParam(name = "Member_id") int Member_id)
+    {
 
         Team team = teamrepository.findTeamById(Team_id);
         team.getMembers().remove(userRepository.findById(Member_id).get());
@@ -96,10 +90,8 @@ public class TeamController {
         return "redirect:/TeamMembers?Team_id=" + Team_id ;
     }
 
-
-    @RequestMapping(value = "/AddMember",method = RequestMethod.POST)
-    public String AddMember(Model model, @ModelAttribute("connectedUser") User user ,
-                            @RequestParam(name = "Team_id") int Team_id ,
+    @PostMapping(path="/AddMember")
+    public String addMember(@RequestParam(name = "Team_id") int Team_id ,
                             @RequestParam(name = "AddMemberId") int AddMemberId ) {
 
         Team team = teamrepository.findTeamById(Team_id);
@@ -108,18 +100,9 @@ public class TeamController {
         return "redirect:/TeamMembers?Team_id=" + Team_id ;
     }
 
-//    @RequestMapping(value = "/AddProjects",method = RequestMethod.POST)
-//    public String AddMemberP (Model model, @ModelAttribute("connectedUser") User user , @RequestParam(name = "Team_id") int Team_id , @RequestParam(name = "Member_id") int Member_id ) {
-//
-//        Team team = teamrepository.findTeamById(Team_id);
-//        team.getMembers().remove(userRepository.findById(Member_id).get());
-//        teamrepository.save(team);
-//        return "redirect:/TeamMembers?Team_id=" + Team_id ;
-//    }
-
-
     @GetMapping("/{id}")
-    public String viewTeam(@PathVariable Integer id, Model model, @ModelAttribute("connectedUser") User user) {
+    public String viewTeam(@PathVariable Integer id, Model model, HttpSession session) {
+        User user = (User) session.getAttribute("connectedUser");
         if (user == null) {
             return "redirect:/login";
         }
@@ -133,27 +116,13 @@ public class TeamController {
         }
     }
 
-    @GetMapping("/add")
-    public String addTeamForm(Model model, @ModelAttribute("connectedUser") User user) {
-      //  List<User> Members = UserRepository.;
-        if (user == null) {
-            return "redirect:/login";
-        }
-        model.addAttribute("user", user);
-        model.addAttribute("team", new Team());
-       // model.addAttribute("ListMembers",Members);
-        return "Main/TeamPages/team-add";
-    }
-    @RequestMapping(value = "/create-new-team",method = RequestMethod.POST)
-    public String CreateNewTeam(HttpServletRequest request, HttpServletResponse response,
-                                   @ModelAttribute("connectedUser" ) User user ,
-                                   @RequestParam(name = "nom") String teamName,
-                                   Model model)
+    @PostMapping(path="/create-new-team")
+    public String createNewTeam(HttpSession session ,Model model, @RequestParam(name = "nom") String teamName)
     {
+        User user = (User) session.getAttribute("connectedUser");
         model.addAttribute("user",user);
         try {
             Team team=new Team();
-            System.out.println("********************************************************");
             team.setNom(teamName);
             team.setLeader(user);
             teamrepository.save(team);
@@ -166,12 +135,13 @@ public class TeamController {
 
     }
 
-    @RequestMapping(value = "/NewTeam",method = RequestMethod.GET)
-    public String NewTeam(@ModelAttribute("connectedUser") User user,Model model,
+    @GetMapping("/NewTeam")
+    public String newTeam(HttpSession session,Model model,
                           @RequestParam(name = "search") String search) {
 
         Team NewTeam = new Team();
         List<User> users = userRepository.findAll();
+        User user = (User) session.getAttribute("connectedUser");
 
         model.addAttribute("search", search);
         model.addAttribute("user", user);
@@ -180,8 +150,10 @@ public class TeamController {
         return "Main/TeamPages/AddTeam";
     }
 
-    @RequestMapping(value = "/NewTeam",method = RequestMethod.POST)
-    public String NewTeamP(@ModelAttribute("connectedUser") User user,@ModelAttribute("NewTeam") Team NewTeam ) {
+    @PostMapping(path="/NewTeam")
+    public String newTeamP(HttpSession session,@ModelAttribute("NewTeam") Team NewTeam ) {
+
+        User user = (User) session.getAttribute("connectedUser");
 
         if (NewTeam == null) {
             return "redirect:/NewTeam?error=notfound";
@@ -196,7 +168,8 @@ public class TeamController {
 
     @GetMapping("/edit-team")
     public String editTeamForm(@RequestParam("Team_id") Integer teamId, Model model,
-                               @ModelAttribute("connectedUser") User user) {
+                               HttpSession session) {
+        User user = (User) session.getAttribute("connectedUser");
         if (user == null) {
             return "redirect:/login";
         }
@@ -209,12 +182,12 @@ public class TeamController {
         return "Main/TeamPages/EditTeam";
     }
 
-    @RequestMapping(value="/update-team" , method = RequestMethod.GET)
-    public String updateTeam(HttpServletRequest request, HttpServletResponse response,
-                             @ModelAttribute("connectedUser") User user,
+    @GetMapping("/update-team")
+    public String updateTeam(HttpSession session,Model model,
                              @RequestParam("id") Integer id,
-                             @RequestParam("nom") String name,
-                             Model model) {
+                             @RequestParam("nom") String name)
+    {
+        User user = (User) session.getAttribute("connectedUser");
         if (user == null) {
             return "redirect:/login";
         }
@@ -235,7 +208,8 @@ public class TeamController {
     }
 
     @GetMapping("DeleteTeam")
-    public String deleteTeam( Integer Team_id, @ModelAttribute("connectedUser") User user) {
+    public String deleteTeam( Integer Team_id, HttpSession session) {
+        User user = (User) session.getAttribute("connectedUser");
         if (user == null) {
             return "redirect:/login";
         }

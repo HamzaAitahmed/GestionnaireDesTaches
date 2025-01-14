@@ -1,6 +1,5 @@
 package ma.emsi.gestionnairedestaches.services;
 
-
 import ma.emsi.gestionnairedestaches.model.User;
 import ma.emsi.gestionnairedestaches.repository.UserRepository;
 import org.springframework.security.core.userdetails.UserDetails;

@@ -35,7 +35,7 @@ public class Project {
                 " | nom = '" + nom + '\'' +
                 " | Description = '" + Description + '\'' +
 //                ", Tasks=" + Tasks.toString() +
-                " | ProjectOwner { id = " + ProjectOwner.getId() +" | username  = " + ProjectOwner.getUsername() + " } " +
+//                " | ProjectOwner { id = " + ProjectOwner.getId() +" | username  = " + ProjectOwner.getUsername() + " } " +
 //                ", ProjectTeam=" + ProjectTeam.getNom() +
                 '}';
     }

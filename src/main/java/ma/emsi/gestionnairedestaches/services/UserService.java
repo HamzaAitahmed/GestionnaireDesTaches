@@ -4,6 +4,7 @@ package ma.emsi.gestionnairedestaches.services;
 import ma.emsi.gestionnairedestaches.model.User;
 import ma.emsi.gestionnairedestaches.repository.UserRepository;
 import org.springframework.stereotype.Service;
+
 @Service
 public class UserService {
 

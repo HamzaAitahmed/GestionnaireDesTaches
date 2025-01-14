@@ -1,12 +1,10 @@
 package ma.emsi.gestionnairedestaches.controller;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import ma.emsi.gestionnairedestaches.model.*;
 import ma.emsi.gestionnairedestaches.repository.ProjectRepository;
 import ma.emsi.gestionnairedestaches.repository.TaskRepository;
 import ma.emsi.gestionnairedestaches.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -16,20 +14,24 @@ import java.util.Collection;
 import java.util.List;
 
 @Controller
-@SessionAttributes({"connectedUser"})
-@RequestMapping("")
 public class TaskController {
 
-    @Autowired TaskRepository taskRepository;
-    @Autowired ProjectRepository projectRepository;
-    @Autowired UserRepository userRepository;
+    private final TaskRepository taskRepository;
+    private final ProjectRepository projectRepository;
+    private final UserRepository userRepository;
 
 
+    TaskController(TaskRepository taskRepository, ProjectRepository projectRepository, UserRepository userRepository ){
+        this.taskRepository = taskRepository;
+        this.projectRepository = projectRepository;
+        this.userRepository = userRepository;
+    }
+    
     @GetMapping(path="/task")
-    public String task(Model model, @RequestParam(name = "Project_id" , defaultValue = "-1" ) int Project_id, @SessionAttribute("connectedUser" ) User user)
+    public String task(Model model, @RequestParam(name = "Project_id" , defaultValue = "-1" ) int project_id, @SessionAttribute("connectedUser" ) User user)
     {
         Project project;
-        if(Project_id == -1)
+        if(project_id == -1)
         {
             List<Project> projects = projectRepository.findByProjectOwner(user.getId());
             if (projects.isEmpty())
@@ -37,48 +39,49 @@ public class TaskController {
                 project = null;
             }else {
                 project = projects.get(0);
-                Project_id = project.getId();
+                project_id = project.getId();
             }
         }else{
-            project = projectRepository.findProjectById(Project_id);
+            project = projectRepository.findProjectById(project_id);
         }
 
 
-        List<Project> ListProject = projectRepository.findByProjectOwner(user.getId());
-        List<Task> ListTaskDone = taskRepository.findProjectTaskByTaskDone(Project_id,true);
-        List<Task> ListTaskNotDone = taskRepository.findProjectTaskByTaskDone(Project_id,false);
+        List<Project> listProject = projectRepository.findByProjectOwner(user.getId());
+        List<Task> listTaskDone = taskRepository.findProjectTaskByTaskDone(project_id,true);
+        List<Task> listTaskNotDone = taskRepository.findProjectTaskByTaskDone(project_id,false);
 
         model.addAttribute("user", user);
-        model.addAttribute("ListTaskDone", ListTaskDone);
-        model.addAttribute("ListTaskNotDone", ListTaskNotDone);
-        model.addAttribute("ListProject", ListProject);
+        model.addAttribute("ListTaskDone", listTaskDone);
+        model.addAttribute("ListTaskNotDone", listTaskNotDone);
+        model.addAttribute("ListProject", listProject);
         model.addAttribute("CurrentProject",project);
 
         return "Main/TaskPages/task";
     }
 
     @GetMapping(path="/TaskStatus")
-    public String taskStatus(@RequestParam(name = "Project_id" ) int Project_id,@RequestParam(name = "Task_id" ) int Task_id)
+    public String taskStatus(@RequestParam(name = "Project_id" ) int project_id,@RequestParam(name = "Task_id" ) int task_id)
     {
-        Task taskCheck = taskRepository.findTaskById(Task_id);
+        Task taskCheck = taskRepository.findTaskById(task_id);
         taskCheck.setTaskDone( ! ( taskCheck.isTaskDone() ) ) ; // convert task status if its Done or Not Done
         taskRepository.save(taskCheck);
-        return "redirect:/task?Project_id="+Project_id;
+        return "redirect:/task?Project_id="+project_id;
     }
 
-    @RequestMapping(value = "/DeleteTask",method = RequestMethod.GET)
-    public String deleteTask(@RequestParam(name = "Project_id" ) int Project_id,@RequestParam(name = "Task_id" ) int Task_id){
-        taskRepository.deleteById(Task_id);
-        return "redirect:/task?Project_id="+Project_id;
+    @GetMapping(path="/DeleteTask")
+    public String deleteTask(@RequestParam(name = "Project_id" ) int project_id,@RequestParam(name = "Task_id" ) int task_id){
+        taskRepository.deleteById(task_id);
+        return "redirect:/task?Project_id="+project_id;
     }
 
-    @RequestMapping(value = "/NewTask",method = RequestMethod.GET)
-    public String NewTask(@ModelAttribute("connectedUser" ) User user , @RequestParam(name = "Project_id") int Project_id, Model model)
+    @GetMapping(path="/NewTask")
+    public String newTask(HttpSession session , @RequestParam(name = "Project_id") int project_id, Model model)
     {
-        Project ObjProject = projectRepository.findProjectById(Project_id);
+        Project ObjProject = projectRepository.findProjectById(project_id);
+        User user = (User) session.getAttribute("connectedUser");
 
-        Task NewTask = new Task();
-        NewTask.setProjectTask(ObjProject);
+        Task newTask = new Task();
+        newTask.setProjectTask(ObjProject);
 
         Team team = ObjProject.getProjectTeam();
         Collection<User> users = null;
@@ -88,53 +91,47 @@ public class TaskController {
             users.add(team.getLeader());
         }
 
-        List<Task> ListTaskDone = taskRepository.findProjectTaskByTaskDone(Project_id,true);
-        List<Task> ListTaskNotDone = taskRepository.findProjectTaskByTaskDone(Project_id,false);
+        List<Task> listTaskDone = taskRepository.findProjectTaskByTaskDone(project_id,true);
+        List<Task> listTaskNotDone = taskRepository.findProjectTaskByTaskDone(project_id,false);
 
-//        for(User vuser : users)
-//            System.out.println("@###@#####@ ---> "+vuser);
-
-        model.addAttribute("NewTask",NewTask);
-        model.addAttribute("Project_id",Project_id);
+        model.addAttribute("NewTask",newTask);
+        model.addAttribute("Project_id",project_id);
         model.addAttribute("users",users);
         model.addAttribute("user",user);
-        model.addAttribute("ListTaskDone", ListTaskDone);
-        model.addAttribute("ListTaskNotDone", ListTaskNotDone);
+        model.addAttribute("ListTaskDone", listTaskDone);
+        model.addAttribute("ListTaskNotDone", listTaskNotDone);
         model.addAttribute("CurrentProject",ObjProject);
         return "Main/TaskPages/AddTask";
     }
 
-    @RequestMapping(value = "/NewTask",method = RequestMethod.POST)
-    public String AddNewTask(@ModelAttribute("connectedUser" ) User user ,
-                                   @ModelAttribute("NewTask") Task NewTask ,
-                                   @ModelAttribute("Project_id") Integer Project_id )
+    @PostMapping(path="/NewTask")
+    public String addNewTask(@ModelAttribute("NewTask") Task newTask ,@ModelAttribute("Project_id") Integer project_id )
     {
-        System.out.println("NewTask Post : "+NewTask);
+
         try {
-            if(NewTask == null){
-                return "redirect:/NewTask?Project_id="+Project_id+"&error=TaskIsNull";
+            if(newTask == null){
+                return "redirect:/NewTask?Project_id="+project_id;
             }
-            taskRepository.save(NewTask);
-            projectRepository.save(projectRepository.findProjectById(Project_id));
-            return "redirect:/task?Project_id="+Project_id;
+            taskRepository.save(newTask);
+            projectRepository.save(projectRepository.findProjectById(project_id));
+            return "redirect:/task?Project_id="+project_id;
 
         } catch (Exception e){
-            System.out.println("NewTask erro exception ");
-            return "redirect:/NewTask?Project_id="+Project_id+"&error=TaskAlreadyExist";
+            return "redirect:/NewTask?Project_id="+project_id;
         }
 
     }
 
 
-    @RequestMapping(value = "/EditTask",method = RequestMethod.GET)
-    public String EditTask(@ModelAttribute("connectedUser" ) User user , @RequestParam(name = "Project_id") int Project_id,@RequestParam(name = "Task_id") int Task_id, Model model)
+    @GetMapping(path="/EditTask")
+    public String editTask(HttpSession session , @RequestParam(name = "Project_id") int project_id,@RequestParam(name = "Task_id") int task_id, Model model)
     {
-        System.out.println("EditTask Get : "+Task_id);
+        User user = (User) session.getAttribute("connectedUser");
 
-        Project ObjProject = projectRepository.findProjectById(Project_id);
-        Task ObjTask = taskRepository.findTaskById(Task_id);
+        Project objProject = projectRepository.findProjectById(project_id);
+        Task objTask = taskRepository.findTaskById(task_id);
 
-        Team team = ObjProject.getProjectTeam();
+        Team team = objProject.getProjectTeam();
         Collection<User> users = null;
         if(team!=null)
         {
@@ -142,48 +139,50 @@ public class TaskController {
             users.add(team.getLeader());
         }
 
-        List<Task> ListTaskDone = taskRepository.findProjectTaskByTaskDone(Project_id,true);
-        List<Task> ListTaskNotDone = taskRepository.findProjectTaskByTaskDone(Project_id,false);
+        List<Task> listTaskDone = taskRepository.findProjectTaskByTaskDone(project_id,true);
+        List<Task> listTaskNotDone = taskRepository.findProjectTaskByTaskDone(project_id,false);
 
-        model.addAttribute("EditTask",ObjTask);
-        model.addAttribute("Task_id",Task_id);
-        model.addAttribute("Project_id",Project_id);
+        model.addAttribute("EditTask",objTask);
+        model.addAttribute("Task_id",task_id);
+        model.addAttribute("Project_id",project_id);
         model.addAttribute("users",users);
         model.addAttribute("user",user);
-        model.addAttribute("ListTaskDone", ListTaskDone);
-        model.addAttribute("ListTaskNotDone", ListTaskNotDone);
-        model.addAttribute("CurrentProject",ObjProject);
+        model.addAttribute("ListTaskDone", listTaskDone);
+        model.addAttribute("ListTaskNotDone", listTaskNotDone);
+        model.addAttribute("CurrentProject",objProject);
         return "Main/TaskPages/EditTask";
     }
 
-    @RequestMapping(value = "/EditTaskx",method = RequestMethod.POST)
-    public String EditTask(@ModelAttribute("connectedUser" ) User user ,
-                                @RequestParam(name = "Task_id") int Task_id ,
-                                @RequestParam(name = "nom") String nom ,
-                                @RequestParam(name = "users" , defaultValue = "-1" ) int user_id ,
-                                @RequestParam(name = "description") String description ,
-                                @ModelAttribute("Project_id") Integer Project_id )
+    @PostMapping(path="/EditTask")
+    public String editTask( RedirectAttributes redirectAttributes,
+                            @RequestParam(name = "Task_id") int task_id ,
+                            @RequestParam(name = "nom") String nom ,
+                            @RequestParam(name = "users" , defaultValue = "-1" ) int user_id ,
+                            @RequestParam(name = "description") String description ,
+                            @ModelAttribute("Project_id") Integer project_id )
     {
-
-        Task EditTask = taskRepository.findTaskById(Task_id);
+        Task editTask = taskRepository.findTaskById(task_id);
         try {
-            if(EditTask == null){
-                System.out.println("EditTask Post error 1 : "+EditTask);
-                return "redirect:/EditTask?Project_id="+Project_id+"&Task_id="+Task_id+"&error";
+            if(editTask == null){
+                redirectAttributes.addAttribute("Project_id", project_id);
+                redirectAttributes.addAttribute("Task_id", task_id);
+                return "redirect:/EditTask";
             }
-            EditTask.setNom(nom);
-            EditTask.setDescription(description);
+            editTask.setNom(nom);
+            editTask.setDescription(description);
             if(user_id != -1)
-                EditTask.setUserTask( userRepository.findUserById(user_id) );
+                editTask.setUserTask( userRepository.findUserById(user_id) );
             else
-                EditTask.setUserTask(null);
+                editTask.setUserTask(null);
 
-            taskRepository.save(EditTask);
-            return "redirect:/task?Project_id="+Project_id;
+            taskRepository.save(editTask);
+            redirectAttributes.addAttribute("Project_id", project_id);
+            return "redirect:/task";
 
         } catch (Exception e){
-            System.out.println("EditTask Post error 2 : "+EditTask);
-            return "redirect:/EditTask?Project_id="+Project_id+"&Task_id="+Task_id+"&error";
+            redirectAttributes.addAttribute("Project_id", project_id);
+            redirectAttributes.addAttribute("Task_id", task_id);
+            return "redirect:/EditTask";
         }
 
     }

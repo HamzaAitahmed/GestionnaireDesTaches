@@ -1,7 +1,5 @@
 package ma.emsi.gestionnairedestaches.config;
 
-
-
 import ma.emsi.gestionnairedestaches.services.CustomUserDetailsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -9,7 +7,9 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.crypto.password.NoOpPasswordEncoder;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
@@ -24,33 +24,29 @@ public class SecurityConfig {
 
 
     @Bean
-    public AuthenticationManager authenticationManager(HttpSecurity http, NoOpPasswordEncoder noOpPasswordEncoder)
-            throws Exception {
+    public AuthenticationManager authenticationManager(HttpSecurity http, PasswordEncoder passwordEncoder) throws Exception {
+
         AuthenticationManagerBuilder authenticationManagerBuilder = http.getSharedObject(AuthenticationManagerBuilder.class);
-        authenticationManagerBuilder.userDetailsService(userDetailsService).passwordEncoder(noOpPasswordEncoder);
+        authenticationManagerBuilder.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder);
         return authenticationManagerBuilder.build();
     }
 
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
-                .authorizeHttpRequests()
-                .requestMatchers("/home**","/login**","/register**","/logout**","/css/**","/js/**","/images/**","/vendor/**").permitAll()
-                .anyRequest().authenticated();
-        http
-                .formLogin()
-                .loginPage("/home"); // Methode Post Doesnt Work
+        return http
+                .authorizeHttpRequests(ar -> ar.requestMatchers("/home**","/login**","/register**","/logout**","/css/**","/js/**","/images/**","/vendor/**").permitAll())
+                .authorizeHttpRequests(ar->ar.anyRequest().authenticated())
+                .formLogin(ar -> ar.loginPage("/home").defaultSuccessUrl("/home", true).permitAll())// methode post doesnt work ???
+                .logout(lg->lg.logoutUrl("/logout").logoutSuccessUrl("/login").invalidateHttpSession(true).deleteCookies("JSESSIONID").permitAll())
+                .sessionManagement(sm->sm.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
+                .build();
 
-        System.out.println("Security Config ligne 45");
-
-        return http.build();
     }
 
-    @SuppressWarnings("deprecation")
     @Bean
-    public NoOpPasswordEncoder passwordEncoder() {
-        return (NoOpPasswordEncoder) NoOpPasswordEncoder.getInstance();
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
     }
 
 }

@@ -2,6 +2,9 @@ package ma.emsi.gestionnairedestaches.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.Date;
 
@@ -9,7 +12,10 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-public class User {
+public class User implements Serializable {
+
+    @Serial
+    private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

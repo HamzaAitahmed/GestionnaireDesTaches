@@ -37,9 +37,9 @@ public class Team {
         return "Team{" +
                 "id=" + id +
                 ", nom='" + nom + '\'' +
-                ", Leader=" + Leader +
-                ", Projects=" + Projects.toString() +
-                ", Members=" + Members.toString() +
+//                ", Leader=" + Leader +
+//                ", Projects=" + Projects.toString() +
+//                ", Members=" + Members.toString() +
                 '}';
     }
     
