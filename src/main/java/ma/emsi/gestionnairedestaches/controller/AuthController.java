@@ -25,6 +25,9 @@ public class AuthController {
     private final UserRepository userRepository;
     private final AuthenticationManager authenticationManager;
 
+    public static final String REDIRECT_REGISTER_ERROR = "redirect:/register?error";
+    public static final String REDIRECT_LOGIN = "redirect:/login";
+
     public AuthController(UserRepository userRepository ,UserService userService,AuthenticationManager authenticationManager) {
         this.userService = userService;
         this.authenticationManager = authenticationManager;
@@ -44,7 +47,7 @@ public class AuthController {
         try {
             User authenticatedUser = userRepository.findUserByEmail(email);
             if(authenticatedUser == null){
-                     return "redirect:/login";
+                     return REDIRECT_LOGIN;
             }
             Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email,password));
             SecurityContext securityContext = SecurityContextHolder.getContext();
@@ -55,14 +58,13 @@ public class AuthController {
             return "redirect:/";
 
         } catch (Exception e){
-             return "redirect:/login";
+             return REDIRECT_LOGIN;
         }
 
     }
 
     @GetMapping(path="/logout")
     public String logout(SessionStatus sessionStatus, HttpServletRequest request, Model model){
-        System.out.println("Logout GET");
         model.addAttribute("message","Logout Failed");
         HttpSession session = request.getSession();
         session.invalidate();
@@ -94,23 +96,23 @@ public class AuthController {
             User userTest = userRepository.findUserByEmail(user.getEmail());
 
             if(userTest != null){
-                 return "redirect:/register?error";
+                 return REDIRECT_REGISTER_ERROR;
             }
 
             User newUser = userService.createUser(user);
             if(newUser == null){
-                 return "redirect:/register?error";
+                 return REDIRECT_REGISTER_ERROR;
             }
             newUser.setProfilePicture("images/user/inconnu.jpg");
             Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(user.getEmail(),user.getPassword()));
             SecurityContext securityContext = SecurityContextHolder.getContext();
             securityContext.setAuthentication(authentication);
 
-            return "redirect:/login";
+            return REDIRECT_LOGIN;
 
         } catch (Exception e){
             redirectAttributes.addAttribute("error", "Registred Failed"); // or some error message
-            return "redirect:/register?error";
+            return REDIRECT_REGISTER_ERROR;
         }
 
     }

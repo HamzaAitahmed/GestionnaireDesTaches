@@ -100,8 +100,8 @@
                                         </div>
                                     </div>
                                     <div class="link-shadow">
-                                        <a th:hidden="${user.id!=s.projectOwner.id}"  class="btn bg-success-light mr-1" th:href="@{EditProject(Project_id=${s.id} , search=${search})}"><i class="ri-edit-box-line m-0"></i></a>
-                                        <a th:hidden="${user.id!=s.projectOwner.id}"  onclick="confirmerDelete(this.href);return false ;" class="btn bg-secondary-light" th:href="@{deleteProject(Project_id=${s.id} , search=${search})}" ><i class="ri-delete-bin-2-fill m-0"></i></a>
+                                        <a th:hidden="${user.id!=s.projectOwner.id}"  class="btn bg-success-light mr-1" th:href="@{EditProject(projectId=${s.id} , search=${search})}"><i class="ri-edit-box-line m-0"></i></a>
+                                        <a th:hidden="${user.id!=s.projectOwner.id}"  onclick="confirmerDelete(this.href);return false ;" class="btn bg-secondary-light" th:href="@{deleteProject(projectId=${s.id} , search=${search})}" ><i class="ri-delete-bin-2-fill m-0"></i></a>
                                     </div>
                                 </div>
                             </div>

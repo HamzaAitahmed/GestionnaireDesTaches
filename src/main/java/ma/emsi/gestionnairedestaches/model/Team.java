@@ -2,6 +2,9 @@ package ma.emsi.gestionnairedestaches.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.Collection;
 
 @Data
@@ -9,7 +12,11 @@ import java.util.Collection;
 @NoArgsConstructor
 @Entity
 
-public class Team {
+public class Team implements Serializable {
+
+    @Serial
+    private static final long serialVersionUID = 2L;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -18,18 +25,18 @@ public class Team {
     private String nom;
 
     @ManyToOne
-    private User Leader;
+    private User leader;
 
-    @OneToMany(mappedBy = "ProjectTeam")
-    private Collection<Project> Projects;
+    @OneToMany(mappedBy = "projectTeam")
+    private Collection<Project> projects;
 
     @ManyToMany
-    private  Collection<User> Members;
+    private  Collection<User> members;
 
     public Team(Integer id, String nom, User leader) {
         this.id = id;
         this.nom = nom;
-        Leader = leader;
+        this.leader = leader;
     }
 
     @Override
@@ -37,9 +44,6 @@ public class Team {
         return "Team{" +
                 "id=" + id +
                 ", nom='" + nom + '\'' +
-//                ", Leader=" + Leader +
-//                ", Projects=" + Projects.toString() +
-//                ", Members=" + Members.toString() +
                 '}';
     }
     

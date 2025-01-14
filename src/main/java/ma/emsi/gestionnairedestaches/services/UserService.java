@@ -15,8 +15,7 @@ public class UserService {
     }
 
     public User getUserByEmail(String email){
-        User user = userRepository.findUserByEmail(email);
-        return user;
+        return userRepository.findUserByEmail(email);
     }
 
     public User createUser(User user){

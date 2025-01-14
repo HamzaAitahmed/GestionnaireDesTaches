@@ -12,10 +12,7 @@ public class HomeController {
 
     @GetMapping(path="/")
     public String index(HttpServletRequest request){
-//        User user3 = userRepository.findUserByEmail("hamza@gmail.com");
-//        HttpSession session = request.getSession(true);
-//        session.setAttribute("connectedUser",user3);
-        return "redirect:/project";
+            return "redirect:/project";
     }
 
     @GetMapping(path="/error500")

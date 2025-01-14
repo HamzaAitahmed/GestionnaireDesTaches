@@ -11,6 +11,10 @@ public class GestionnaireDesTachesApplication implements CommandLineRunner {
         SpringApplication.run(GestionnaireDesTachesApplication.class, args);
     }
     @Override
-    public void run(String... args) throws Exception { }
+    public void run(String... args) throws Exception {
+        // This method is intentionally left empty because it is not required
+        // for this application's specific functionality. It serves as a placeholder
+        // for the CommandLineRunner interface.
+    }
 
 }

@@ -2,14 +2,20 @@ package ma.emsi.gestionnairedestaches.model;
 
 import jakarta.persistence.*;
 import lombok.*;
-import java.util.Collection;
+
+import java.io.Serial;
+import java.io.Serializable;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
 
-public class Task {
+public class Task implements Serializable {
+
+    @Serial
+    private static final long serialVersionUID = 4L;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -17,13 +23,13 @@ public class Task {
     @Column(unique=true) // unique seulement dans le projet
     private String nom;
     private String description;
-    private boolean TaskDone=false;
+    private boolean taskDone=false;
 
     @ManyToOne
-    private User UserTask;
+    private User userTask;
 
     @ManyToOne
-    private Project ProjectTask;
+    private Project projectTask;
 
     @Override
     public String toString() {
@@ -31,9 +37,7 @@ public class Task {
                 "id=" + id +
                 ", nom='" + nom + '\'' +
                 ", description='" + description + '\'' +
-                ", TaskDone=" + TaskDone +
-//                ", UserTask=" + UserTask +
-//                ", ProjectTask=" + ProjectTask +
+                ", TaskDone=" + taskDone +
                 '}';
     }
 }

@@ -24,12 +24,15 @@ public class User implements Serializable {
     @Column(unique=true)
     private String email;
 
-    private String FirstName, LastName, username, password;
+    private String firstName;
+    private String lastName;
+    private String username;
+    private String password;
 
     @Temporal(TemporalType.DATE)
     private Date dateOfBirth;
 
-    private String Gender;
+    private String gender;
 
     @Column(name = "ROLE")
     private String role;
@@ -37,17 +40,17 @@ public class User implements Serializable {
     @Column(name = "photo", nullable = true)
     private String profilePicture;
 
-    @OneToMany(mappedBy = "ProjectOwner")
-    private Collection<Project> Projects;
+    @OneToMany(mappedBy = "projectOwner")
+    private Collection<Project> projects;
 
-    @OneToMany(mappedBy = "UserTask")
-    private Collection<Task> Tasks;
+    @OneToMany(mappedBy = "userTask")
+    private Collection<Task> tasks;
 
-    @OneToMany(mappedBy = "Leader")
-    private Collection<Team> MyTeams;
+    @OneToMany(mappedBy = "leader")
+    private Collection<Team> myTeams;
 
-    @ManyToMany(mappedBy = "Members")
-    private Collection<Team> Teams;
+    @ManyToMany(mappedBy = "members")
+    private Collection<Team> teams;
 
     public User(String email, String password, String username) {
         this.email = email;
@@ -60,8 +63,8 @@ public class User implements Serializable {
         return "User{" +
                 " id=" + id +
                 " | email='" + email + '\'' +
-                " | FirstName='" + FirstName + '\'' +
-                " | LastName='" + LastName + '\'' +
+                " | FirstName='" + firstName + '\'' +
+                " | LastName='" + lastName + '\'' +
                 " | username='" + username + '\'' +
                 '}';
     }

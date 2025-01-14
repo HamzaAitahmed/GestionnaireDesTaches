@@ -2,6 +2,9 @@ package ma.emsi.gestionnairedestaches.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.Collection;
 
 @Data
@@ -9,7 +12,11 @@ import java.util.Collection;
 @NoArgsConstructor
 @Entity
 
-public class Project {
+public class Project implements Serializable {
+
+    @Serial
+    private static final long serialVersionUID = 3L;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -17,26 +24,23 @@ public class Project {
     @Column(unique=true)
     private String nom;
 
-    private String Description;
+    private String description;
 
-    @OneToMany(mappedBy = "ProjectTask")
-    private Collection<Task> Tasks;
-
-    @ManyToOne
-    private User ProjectOwner;
+    @OneToMany(mappedBy = "projectTask")
+    private Collection<Task> tasks;
 
     @ManyToOne
-    private Team ProjectTeam;
+    private User projectOwner;
+
+    @ManyToOne
+    private Team projectTeam;
 
     @Override
     public String toString() {
         return "Project{ " +
                 "id = " + id +
                 " | nom = '" + nom + '\'' +
-                " | Description = '" + Description + '\'' +
-//                ", Tasks=" + Tasks.toString() +
-//                " | ProjectOwner { id = " + ProjectOwner.getId() +" | username  = " + ProjectOwner.getUsername() + " } " +
-//                ", ProjectTeam=" + ProjectTeam.getNom() +
+                " | Description = '" + description + '\'' +
                 '}';
     }
 
