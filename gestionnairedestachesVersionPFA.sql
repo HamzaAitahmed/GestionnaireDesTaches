@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : 127.0.0.1
--- Généré le : jeu. 27 juin 2024 à 16:42
+-- Généré le : mer. 15 jan. 2025 à 00:30
 -- Version du serveur : 10.4.32-MariaDB
 -- Version de PHP : 8.2.12
 
@@ -49,7 +49,7 @@ INSERT INTO `project` (`id`, `nom`, `project_owner_id`, `project_team_id`, `desc
 (73, 'P2 Said', 20, 16, 'P2 Description'),
 (74, 'P1 Karim', 21, 16, 'P1 Description'),
 (75, 'P2 Karim', 21, NULL, 'P2 Description'),
-(78, 'P3 Hamza ', 16, NULL, 'P3 No Description No Need  Team');
+(78, 'P3 Hamza', 16, NULL, 'P3 No Description No Need  Team');
 
 -- --------------------------------------------------------
 
@@ -63,46 +63,43 @@ CREATE TABLE `task` (
   `nom` varchar(255) DEFAULT NULL,
   `project_task_id` int(11) DEFAULT NULL,
   `user_task_id` int(11) DEFAULT NULL,
-  `task_done` bit(1) NOT NULL
+  `task_done` bit(1) NOT NULL,
+  `utilisateur_task_id` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Déchargement des données de la table `task`
 --
 
-INSERT INTO `task` (`id`, `description`, `nom`, `project_task_id`, `user_task_id`, `task_done`) VALUES
-(53, 'T1 Description', 'T1 P1', 67, 17, b'0'),
-(54, 'T2 Description', 'T2 P1', 67, 19, b'0'),
-(55, 'T3 Description', 'T3 P3', 67, 22, b'1'),
-(56, 'T4 Description', 'T4 P4', 67, 21, b'1'),
-(57, 'T1 Descrition', 'T1 P2', 68, 16, b'0'),
-(59, 'T2 Descrition', 'T2 P2', 68, 18, b'0'),
-(60, 'T3 Descrition', 'T3 P2', 68, 17, b'0'),
-(61, 'T4 Descrition', 'T4 P2', 68, 22, b'1'),
-(66, 'T1 Description', 'T 1 P1', 69, NULL, b'0'),
-(67, 'T2 Description', 'T 2 P1', 69, NULL, b'0'),
-(68, 'T3 Description', 'T 3 P1', 69, NULL, b'0'),
-(69, 'T4 Description', 'T 4 P1', 69, NULL, b'0'),
-(70, 'T1 Description', 'T1  P1', 71, NULL, b'0'),
-(71, 'T2 Description', 'T2  P1', 71, NULL, b'0'),
-(72, 'T3 Description', 'T3  P1', 71, NULL, b'0'),
-(73, 'T4 Description', 'T4  P1', 71, NULL, b'0'),
-(74, 'T1 Description', 'T1   P1', 70, NULL, b'0'),
-(75, 'T2 Description', 'T2   P1', 70, NULL, b'0'),
-(76, 'T3 Description', 'T3   P1', 70, NULL, b'0'),
-(77, 'T4 Description', 'T4   P1', 70, NULL, b'0'),
-(78, 'T1 Description', 'T1-P1', 72, NULL, b'0'),
-(79, 'T2 Description', 'T2-P1', 72, NULL, b'0'),
-(80, 'T3 Description', 'T3-P1', 72, NULL, b'0'),
-(81, 'T4 Description', 'T4-P1', 72, NULL, b'0'),
-(82, 'T1 Description', 'T1=P1', 73, NULL, b'0'),
-(83, 'T2 Description', 'T2=P1', 73, NULL, b'0'),
-(84, 'T3 Description', 'T3=P1', 73, NULL, b'0'),
-(85, 'T4 Description', 'T4=P1', 73, NULL, b'0'),
-(86, 'T1 Description', 'T1&P1', 73, NULL, b'0'),
-(87, 'T2 Description', 'T2&P1', 73, NULL, b'0'),
-(88, 'T3 Description', 'T3&P1', 73, NULL, b'0'),
-(89, 'T4 Description', 'T4&P1', 73, NULL, b'0');
+INSERT INTO `task` (`id`, `description`, `nom`, `project_task_id`, `user_task_id`, `task_done`, `utilisateur_task_id`) VALUES
+(53, 'T1 Description', 'T1 P1', 67, 17, b'1', NULL),
+(54, 'T2 Description', 'T2 P1', 67, 19, b'1', NULL),
+(55, 'T3 Description', 'T3 P3', 67, 22, b'1', NULL),
+(56, 'T4 Description', 'T4 P4', 67, 21, b'1', NULL),
+(57, 'T1 Descrition', 'T1 P2', 68, 16, b'0', NULL),
+(59, 'T2 Descrition', 'T2 P2', 68, 18, b'0', NULL),
+(60, 'T3 Descrition', 'T3 P2', 68, 17, b'1', NULL),
+(61, 'T4 Descrition', 'T4 P2', 68, 22, b'1', NULL),
+(66, 'T1 Description', 'T 1 P1', 69, NULL, b'0', NULL),
+(67, 'T2 Description', 'T 2 P1', 69, NULL, b'0', NULL),
+(68, 'T3 Description', 'T 3 P1', 69, NULL, b'0', NULL),
+(69, 'T4 Description', 'T 4 P1', 69, NULL, b'0', NULL),
+(70, 'T1 Description', 'T1  P1', 71, NULL, b'0', NULL),
+(71, 'T2 Description', 'T2  P1', 71, NULL, b'0', NULL),
+(72, 'T3 Description', 'T3  P1', 71, NULL, b'0', NULL),
+(73, 'T4 Description', 'T4  P1', 71, NULL, b'0', NULL),
+(74, 'T1 Description', 'T1   P1', 70, NULL, b'0', NULL),
+(75, 'T2 Description', 'T2   P1', 70, NULL, b'0', NULL),
+(76, 'T3 Description', 'T3   P1', 70, NULL, b'0', NULL),
+(77, 'T4 Description', 'T4   P1', 70, NULL, b'0', NULL),
+(78, 'T1 Description', 'T1-P1', 72, NULL, b'0', NULL),
+(79, 'T2 Description', 'T2-P1', 72, NULL, b'0', NULL),
+(80, 'T3 Description', 'T3-P1', 72, NULL, b'0', NULL),
+(81, 'T4 Description', 'T4-P1', 72, NULL, b'0', NULL),
+(86, 'T1 Description', 'T1&P1', 73, NULL, b'0', NULL),
+(87, 'T2 Description', 'T2&P1', 73, NULL, b'0', NULL),
+(88, 'T3 Description', 'T3&P1', 73, NULL, b'0', NULL),
+(89, 'T4 Description', 'T4&P1', 73, NULL, b'0', NULL);
 
 -- --------------------------------------------------------
 
@@ -129,7 +126,8 @@ INSERT INTO `team` (`id`, `nom`, `leader_id`) VALUES
 (21, 'T2 ibtissam', 18),
 (22, 'T1 Amina', 19),
 (23, 'T1 Karim', 21),
-(24, 'T2 Karim', 21);
+(24, 'T2 Karim', 21),
+(25, 'test team', 16);
 
 -- --------------------------------------------------------
 
@@ -179,12 +177,21 @@ INSERT INTO `team_members` (`teams_id`, `members_id`) VALUES
 (17, 21),
 (17, 22),
 (17, 23),
+(17, 17),
+(17, 24),
 (16, 18),
 (16, 19),
 (16, 20),
 (16, 22),
 (16, 21),
-(16, 23);
+(16, 23),
+(16, 16),
+(16, 25),
+(16, 27),
+(16, 24),
+(16, 26),
+(16, 17),
+(16, 29);
 
 -- --------------------------------------------------------
 
@@ -210,14 +217,41 @@ CREATE TABLE `user` (
 --
 
 INSERT INTO `user` (`id`, `email`, `password`, `role`, `username`, `photo`, `first_name`, `gender`, `last_name`, `date_of_birth`) VALUES
-(16, 'hamza@gmail.com', 'test', NULL, 'Hamza', 'images/user/user-1.jpg', 'hamza', 'Male', 'Aitahmed', '2003-01-09'),
-(17, 'aitahmed@gmail.com', NULL, NULL, 'Ait Ahmed', 'images/user/user-2.jpg', NULL, NULL, NULL, NULL),
-(18, 'ibtissam@gmail.com', NULL, NULL, 'ibtissam', 'images/user/user-3.jpg', NULL, NULL, NULL, NULL),
+(16, 'hamza@gmail.com', '$2a$10$vvIsfW6rkwxknDYOJ6b.fuwINLYplRuJvfCozCJqIwbI/3UJlRXPS', NULL, 'Hamza.Aitahmed', 'images/user/user-1.jpg', 'hamza', 'Male', 'Aitahmed', '2003-01-09'),
+(17, 'aitahmed@gmail.com', NULL, NULL, 'Ait Ahmed', 'images/user/user-2.jpg', NULL, NULL, NULL, '2024-07-10'),
+(18, 'user@gmail.com', NULL, NULL, 'old user', 'images/user/user-3.jpg', NULL, NULL, NULL, '2024-07-05'),
 (19, 'Amina@gmail.com', NULL, NULL, 'Amina', 'images/user/user-4.jpg', NULL, NULL, NULL, NULL),
 (20, 'Said@gmail.com', NULL, NULL, 'Said', 'images/user/11.jpg', NULL, NULL, NULL, NULL),
 (21, 'Karim@gmail.com', NULL, NULL, 'Karim', 'images/user/07.jpg', NULL, NULL, NULL, NULL),
 (22, 'Reda@gmail.com', NULL, NULL, 'Reda', 'images/user/08.jpg', NULL, NULL, NULL, NULL),
-(23, 'Khadija@gmail.com', NULL, NULL, 'Khadija', 'images/user/user-6.jpg', NULL, NULL, NULL, NULL);
+(23, 'Khadija@gmail.com', NULL, NULL, 'Khadija', 'images/user/user-6.jpg', NULL, NULL, NULL, NULL),
+(24, 'user9@gmail.com', '123', 'USER', 'old user', 'images/user/inconnu.jpg', NULL, NULL, NULL, '2024-07-06'),
+(25, 'hamzaaitahmed003@gmail.com', '123', 'USER', 'hamza#03', 'images/user/inconnu.jpg', NULL, NULL, NULL, NULL),
+(26, 'hamzaaitahmed030@gmail.com', '123', 'USER', 'hamzaTest', 'images/user/inconnu.jpg', NULL, NULL, NULL, NULL),
+(27, 'hamzaaitahmed023@gmail.com', '123', 'USER', 'hamza003', 'images/user/inconnu.jpg', NULL, NULL, NULL, NULL),
+(28, 'hamzaaitahmed03@gmail.com', '123', 'USER', 'Hamza.aitahmed', 'images/user/inconnu.jpg', NULL, NULL, NULL, NULL),
+(29, 'messouk@gmail.com', '123', 'USER', 'youness messouk', 'images/user/inconnu.jpg', NULL, NULL, NULL, NULL),
+(30, 'user123@gmail.com', '123', 'USER', 'user123', 'images/user/inconnu.jpg', NULL, NULL, NULL, NULL),
+(31, 'admin@gmail.com', '$2a$10$vvIsfW6rkwxknDYOJ6b.fuwINLYplRuJvfCozCJqIwbI/3UJlRXPS', 'USER', 'admin', 'images/user/11.jpg', NULL, NULL, NULL, NULL);
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `utilisateur`
+--
+
+CREATE TABLE `utilisateur` (
+  `id` int(11) NOT NULL,
+  `first_name` varchar(255) DEFAULT NULL,
+  `gender` varchar(255) DEFAULT NULL,
+  `last_name` varchar(255) DEFAULT NULL,
+  `date_of_birth` date DEFAULT NULL,
+  `email` varchar(255) DEFAULT NULL,
+  `password` varchar(255) DEFAULT NULL,
+  `photo` varchar(255) DEFAULT NULL,
+  `role` varchar(255) DEFAULT NULL,
+  `username` varchar(255) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Index pour les tables déchargées
@@ -239,7 +273,8 @@ ALTER TABLE `task`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `UK_rmwdufunmsq2qenvnl7fl72ur` (`nom`),
   ADD KEY `FK59ieikk11a5cpod5a7xh5jpv3` (`project_task_id`),
-  ADD KEY `FKmoiq7f7vc7oca8ayxj5f0piml` (`user_task_id`);
+  ADD KEY `FKmoiq7f7vc7oca8ayxj5f0piml` (`user_task_id`),
+  ADD KEY `FK3h98r4uh0a9j540swpqca5pcq` (`utilisateur_task_id`);
 
 --
 -- Index pour la table `team`
@@ -264,6 +299,13 @@ ALTER TABLE `user`
   ADD UNIQUE KEY `UK_ob8kqyqqgmefl0aco34akdtpe` (`email`);
 
 --
+-- Index pour la table `utilisateur`
+--
+ALTER TABLE `utilisateur`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `UK_rma38wvnqfaf66vvmi57c71lo` (`email`);
+
+--
 -- AUTO_INCREMENT pour les tables déchargées
 --
 
@@ -271,25 +313,31 @@ ALTER TABLE `user`
 -- AUTO_INCREMENT pour la table `project`
 --
 ALTER TABLE `project`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=79;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=85;
 
 --
 -- AUTO_INCREMENT pour la table `task`
 --
 ALTER TABLE `task`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=90;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=91;
 
 --
 -- AUTO_INCREMENT pour la table `team`
 --
 ALTER TABLE `team`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
 
 --
 -- AUTO_INCREMENT pour la table `user`
 --
 ALTER TABLE `user`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=32;
+
+--
+-- AUTO_INCREMENT pour la table `utilisateur`
+--
+ALTER TABLE `utilisateur`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- Contraintes pour les tables déchargées
@@ -306,6 +354,7 @@ ALTER TABLE `project`
 -- Contraintes pour la table `task`
 --
 ALTER TABLE `task`
+  ADD CONSTRAINT `FK3h98r4uh0a9j540swpqca5pcq` FOREIGN KEY (`utilisateur_task_id`) REFERENCES `utilisateur` (`id`),
   ADD CONSTRAINT `FK59ieikk11a5cpod5a7xh5jpv3` FOREIGN KEY (`project_task_id`) REFERENCES `project` (`id`),
   ADD CONSTRAINT `FKmoiq7f7vc7oca8ayxj5f0piml` FOREIGN KEY (`user_task_id`) REFERENCES `user` (`id`);
 
